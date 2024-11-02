@@ -2,7 +2,7 @@
 
 require_once 'database.php';
 
-class Account{
+class Account {
     public $id = '';
     public $first_name = '';
     public $last_name = '';
@@ -12,14 +12,13 @@ class Account{
     public $is_staff = true;
     public $is_admin = false;
 
-
     protected $db;
 
-    function __construct(){
+    function __construct() {
         $this->db = new Database();
     }
 
-    function add(){
+    function add() {
         $sql = "INSERT INTO account (first_name, last_name, username, password, role, is_staff, is_admin) VALUES (:first_name, :last_name, :username, :password, :role, :is_staff, :is_admin);";
         $query = $this->db->connect()->prepare($sql);
 
@@ -35,16 +34,16 @@ class Account{
         return $query->execute();
     }
 
-    function usernameExist($username, $excludeID){
+    function usernameExist($username, $excludeID) {
         $sql = "SELECT COUNT(*) FROM account WHERE username = :username";
-        if ($excludeID){
+        if ($excludeID) {
             $sql .= " and id != :excludeID";
         }
 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':username', $username);
 
-        if ($excludeID){
+        if ($excludeID) {
             $query->bindParam(':excludeID', $excludeID);
         }
 
@@ -53,15 +52,15 @@ class Account{
         return $count > 0;
     }
 
-    function login($username, $password){
+    function login($username, $password) {
         $sql = "SELECT * FROM account WHERE username = :username LIMIT 1;";
         $query = $this->db->connect()->prepare($sql);
 
-        $query->bindParam('username', $username);
+        $query->bindParam(':username', $username);
 
-        if($query->execute()){
+        if ($query->execute()) {
             $data = $query->fetch();
-            if($data && password_verify($password, $data['password'])){
+            if ($data && password_verify($password, $data['password'])) {
                 return true;
             }
         }
@@ -69,20 +68,29 @@ class Account{
         return false;
     }
 
-    function fetch($username){
+    function fetch($username) {
         $sql = "SELECT * FROM account WHERE username = :username LIMIT 1;";
         $query = $this->db->connect()->prepare($sql);
 
-        $query->bindParam('username', $username);
+        $query->bindParam(':username', $username);
         $data = null;
-        if($query->execute()){
+        if ($query->execute()) {
             $data = $query->fetch();
         }
 
         return $data;
     }
+
+    // New method to fetch all accounts
+    function fetchAllAccounts() {
+        $sql = "SELECT * FROM account";
+        $query = $this->db->connect()->prepare($sql);
+        
+        $query->execute();
+        
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
 // $obj = new Account();
-
 // $obj->add();

@@ -38,7 +38,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="view_accounts.php" class="nav-link">
                 <i class="bi bi-people"></i>
                 <span class="fs-6 ms-2">Accounts</span>
             </a>
